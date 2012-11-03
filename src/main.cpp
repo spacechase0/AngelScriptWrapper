@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 
 #include <scriptstdstring/scriptstdstring.h>
@@ -152,3 +153,4 @@ int main_as()
 	
 	return 0;
 }
+*/

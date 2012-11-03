@@ -20,7 +20,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\libsc0-angelscript-d" prefix_auto="1" extension_auto="1" />
+				<Option output="..\bin\libsc0-angelscript" prefix_auto="1" extension_auto="1" />
 				<Option working_dir=".." />
 				<Option object_output="..\obj\Release\" />
 				<Option type="3" />
@@ -58,8 +58,6 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="scriptbuilder\scriptbuilder.cpp" />
 		<Unit filename="scriptbuilder\scriptbuilder.h" />
-		<Unit filename="scriptstdstring\scriptstdstring.cpp" />
-		<Unit filename="scriptstdstring\scriptstdstring.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
