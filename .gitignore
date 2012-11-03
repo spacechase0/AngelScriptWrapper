@@ -1,0 +1,6 @@
+*.angelscript
+bin
+obj
+*.depend
+*.layout
+*_build_log.html
