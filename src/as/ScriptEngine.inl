@@ -1,9 +1,9 @@
 #include <angelscript.h> // TO DO: Find a way to remove this
 #include <stdexcept>
-#include <util/Convert.h>
 #include <util/FuncTraits.hpp>
 #include <util/MemberFunctionProxy.hpp>
 #include <util/MemberObjectType.hpp>
+#include <util/String.hpp>
 
 #include "as/ClassFlags.hpp"
 #include "as/GenericFunctions.hpp"

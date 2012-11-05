@@ -2,14 +2,14 @@
 
 #include <stdexcept>
 #include <tuple>
-#include <util/Convert.h>
+#include <util/BindTuple.hpp>
+#include <util/GenericPlaceholder.hpp>
+#include <util/String.hpp>
 
 #include "as/ArgConverter.hpp"
 #include "as/ArgSetter.hpp"
 #include "as/ScriptContext.hpp"
 #include "as/TypeGetter.hpp"
-#include "util/BindTuple.hpp"
-#include "util/GenericPlaceholder.hpp"
 
 namespace as
 {

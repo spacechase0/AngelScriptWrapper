@@ -3,7 +3,7 @@
 #include <angelscript.h>
 #include <scriptbuilder/scriptbuilder.h>
 #include <stdexcept>
-#include <util/Convert.h>
+#include <util/String.hpp>
 
 #include "as/ScriptEngine.hpp"
 
