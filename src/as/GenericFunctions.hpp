@@ -76,6 +76,9 @@ namespace as
 			static std::map< CLASS*, unsigned int > refs;
 	};
 	
+	template< class CLASS >
+	std::map< CLASS*, unsigned int > Reffer< CLASS >::refs;
+	
 	// I wish functions could be partially specialized
 	template< class CLASS, bool DO >
 	class Factory

@@ -16,6 +16,7 @@ namespace as
 	class ArgSetter< -1 > // 0 is the first argument
 	{
 		public:
+			template< typename... ARGS >
 			static void setArg( asIScriptContext* context )
 			{
 				//std::cout << "Done setting args" << std::endl;
@@ -31,7 +32,7 @@ namespace as
 			{
 				//std::cout << "Setting arg " << N << " of type " << TypeGetter< ARG >::getType() << std::endl;
 				ArgConverter< ARG >::setArg( context, N, arg );
-				ArgSetter< N - 1 >::setArg( context, args... );
+				ArgSetter< N - 1 >::template setArg< ARGS... >( context, args... );
 			}
 	};
 }

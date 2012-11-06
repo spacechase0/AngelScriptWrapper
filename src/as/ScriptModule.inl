@@ -19,7 +19,7 @@ namespace as
 		asIScriptContext* context = theContext.getRaw();
 		context->Prepare( func );
 
-		as::ArgSetter< sizeof...( ARGS ) - 1 >::setArg( context, args... );
+		as::ArgSetter< sizeof...( ARGS ) - 1 >::template setArg< ARGS... >( context, args... );
 
 		int ret = context->Execute();
 		if ( ret != asEXECUTION_FINISHED )

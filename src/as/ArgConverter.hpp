@@ -20,7 +20,8 @@ namespace as
 			typename std::enable_if< std::is_reference< T >::value, void >::type
 			setArg( asIScriptContext* context, int num, T t )
 			{
-				context->SetArgObject( num, &t );
+				// I hope this is safe
+				context->SetArgObject( num, &const_cast< typename std::remove_const< typename std::remove_reference< T >::type >::type& >( t ) );
 			}
 	};
 	
