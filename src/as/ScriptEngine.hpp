@@ -37,7 +37,10 @@ namespace as
 			registerGlobalProperty( VAR& var, const std::string& name );
 			
 			template< class CLASS >
-			void registerClassType( const std::string& name );
+			void registerClassValueType( const std::string& name );
+			
+			template< class CLASS, bool DO_FACTORY = true >
+			void registerClassReferenceType( const std::string& name );
 			
 			template< typename FUNC >
 			typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type

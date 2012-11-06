@@ -45,7 +45,7 @@ namespace as
 	}
 	
 	template< class CLASS >
-	void ScriptEngine::registerClassType( const std::string& name )
+	void ScriptEngine::registerClassValueType( const std::string& name )
 	{
 		int flags = getClassFlags< CLASS >();
 		
@@ -64,8 +64,34 @@ namespace as
 		res = engine->RegisterObjectBehaviour( name.c_str(), asBEHAVE_DESTRUCT, "void f()", asFUNCTION( &doDestruct< CLASS > ), asCALL_CDECL_OBJFIRST );
 		if ( res < 0 )
 		{
-			throw std::runtime_error( "Failed to register object constructor: " + util::toString( res ) );
+			throw std::runtime_error( "Failed to register object destructor: " + util::toString( res ) );
 		}
+	}
+	
+	template< class CLASS, bool DO_FACTORY >
+	void ScriptEngine::registerClassReferenceType( const std::string& name )
+	{
+		int res = engine->RegisterObjectType( name.c_str(), sizeof( CLASS ), asOBJ_REF );
+		if ( res < 0 )
+		{
+			throw std::runtime_error( "Failed register class type: " + util::toString( res ) );
+		}
+		
+		res = engine->RegisterObjectBehaviour( name.c_str(), asBEHAVE_ADDREF, "void f()", asFUNCTION( &Reffer< CLASS >::addRef ), asCALL_CDECL_OBJFIRST );
+		if ( res < 0 )
+		{
+			throw std::runtime_error( "Failed to register object add reference behavior: " + util::toString( res ) );
+		}
+		
+		res = engine->RegisterObjectBehaviour( name.c_str(), asBEHAVE_RELEASE, "void f()", asFUNCTION( &Reffer< CLASS >::releaseRef ), asCALL_CDECL_OBJFIRST );
+		if ( res < 0 )
+		{
+			throw std::runtime_error( "Failed to register object add reference behavior: " + util::toString( res ) );
+		}
+		
+		// This is a template because if you don't want the factory method, it still compiles the call,
+		// which will fail if the default constructor isn't accessible, like being private.
+		Factory< CLASS, DO_FACTORY >::registerBehavior( engine, name );
 	}
 	
 	template< typename FUNC >
