@@ -126,6 +126,7 @@ protected:
 	};
 	std::vector<SMetadataDecl> foundDeclarations;
 	std::string currentClass;
+	std::string currentNamespace;
 
 	// Storage of metadata for global declarations
 	std::map<int, std::string> typeMetadataMap;

@@ -100,7 +100,8 @@ void CScriptBuilder::ClearAll()
 
 #if AS_PROCESS_METADATA == 1
 	currentClass = "";
-
+	currentNamespace = "";
+	
 	foundDeclarations.clear();
 	typeMetadataMap.clear();
 	funcMetadataMap.clear();
@@ -332,6 +333,57 @@ int CScriptBuilder::ProcessScriptSection(const char *script, const char *section
 			pos += len;
 			continue;
 		}
+		
+		// Check if namespace
+		if( modifiedScript.substr(pos,len) == "namespace" )
+		{
+			// Get the identifier after "namespace"
+			do 
+			{
+				pos += len;
+				t = engine->ParseToken(&modifiedScript[pos], modifiedScript.size() - pos, &len);
+			} while(t == asTC_COMMENT || t == asTC_WHITESPACE);
+			
+			if ( currentNamespace != "" )
+			{
+				currentNamespace += "::";
+			}
+			currentNamespace += modifiedScript.substr(pos,len);
+			
+			// Search until first { is encountered
+			while( pos < modifiedScript.length() )
+			{
+				engine->ParseToken(&modifiedScript[pos], modifiedScript.size() - pos, &len);
+			
+				// If start of namespace section encountered stop
+				if( modifiedScript[pos] == '{' ) 
+				{
+					pos += len;
+					break;
+				}
+
+				// Check next symbol
+				pos += len;
+			}
+
+			continue;
+		}
+
+		// Check if end of namespace
+		if( currentNamespace != "" && modifiedScript[pos] == '}' )
+		{
+			size_t found = currentNamespace.rfind( "::" );
+			if( found != string::npos )
+			{
+				currentNamespace.erase( found );
+			}
+			else
+			{
+				currentNamespace = "";
+			}
+			pos += len;
+			continue;
+		}
 
 		// Is this the start of metadata?
 		if( modifiedScript[pos] == '[' )
@@ -346,6 +398,11 @@ int CScriptBuilder::ProcessScriptSection(const char *script, const char *section
 			// Store away the declaration in a map for lookup after the build has completed
 			if( type > 0 )
 			{
+				if( currentNamespace != "" )
+				{
+					declaration = currentNamespace + "::" + declaration;
+				}
+				
 				SMetadataDecl decl(metadata, declaration, type, currentClass);
 				foundDeclarations.push_back(decl);
 			}
