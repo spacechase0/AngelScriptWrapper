@@ -67,6 +67,7 @@ namespace as
 		}
 	
 	doGenericTypeGetter( void, void );
+	doGenericTypeGetter( bool, bool );
 	doGenericTypeGetter( sf::Uint8, uint8 );
 	doGenericTypeGetter( sf::Uint16, uint16 );
 	doGenericTypeGetter( sf::Uint32, uint32 );
