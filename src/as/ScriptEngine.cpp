@@ -146,4 +146,23 @@ namespace as
 			messageCallback( message );
 		}
 	}
+	
+	void ScriptEngine::processNamespace( std::string& name )
+	{
+		std::string ns = "";
+		
+		std::size_t last = name.rfind( "::" );
+		if ( last != std::string::npos )
+		{
+			ns = name.substr( 0, last );
+			name = name.substr( last + 2 );
+		}
+		
+		if ( ns.length() >= 2 and ns.substr( 0, 2 ) == "::" )
+		{
+			ns.erase( 0, 2 );
+		}
+		
+		engine->SetDefaultNamespace( ns.c_str() );
+	}
 }

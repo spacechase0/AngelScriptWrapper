@@ -30,17 +30,17 @@ namespace as
 			
 			template< typename FUNC >
 			typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
-			registerGlobalFunction( FUNC func, const std::string& name );
+			registerGlobalFunction( FUNC func, const std::string& theName );
 			
 			template< typename VAR >
 			typename std::enable_if< !std::is_reference< VAR >::value and !std::is_same< VAR, long >::value, void >::type
-			registerGlobalProperty( VAR& var, const std::string& name );
+			registerGlobalProperty( VAR& var, const std::string& theName );
 			
 			template< class CLASS >
-			void registerClassValueType( const std::string& name );
+			void registerClassValueType( const std::string& theName );
 			
 			template< class CLASS, bool DO_FACTORY = true >
-			void registerClassReferenceType( const std::string& name );
+			void registerClassReferenceType( const std::string& theName );
 			
 			template< typename FUNC >
 			typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
@@ -77,6 +77,7 @@ namespace as
 			int contextIdCounter;
 			
 			void rawMessageCallback( asSMessageInfo* msg, void* param );
+			void processNamespace( std::string& name );
 	};
 }
 

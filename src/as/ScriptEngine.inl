@@ -15,8 +15,11 @@ namespace as
 {
 	template< typename FUNC >
 	typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
-	ScriptEngine::registerGlobalFunction( FUNC func, const std::string& name )
+	ScriptEngine::registerGlobalFunction( FUNC func, const std::string& theName )
 	{
+		std::string name = theName;
+		processNamespace( name );
+		
 		std::string decl = TypeGetter< typename std::remove_pointer< FUNC >::type >::getType();
 		
 		std::string find = "$__FUNC__$";
@@ -32,8 +35,11 @@ namespace as
 	
 	template< typename VAR >
 	typename std::enable_if< !std::is_reference< VAR >::value and !std::is_same< VAR, long >::value, void >::type
-	ScriptEngine::registerGlobalProperty( VAR& var, const std::string& name )
+	ScriptEngine::registerGlobalProperty( VAR& var, const std::string& theName )
 	{
+		std::string name = theName;
+		processNamespace( name );
+		
 		std::string decl = TypeGetter< VAR >::getType();
 		decl = decl + " " + name;
 		
@@ -45,8 +51,11 @@ namespace as
 	}
 	
 	template< class CLASS >
-	void ScriptEngine::registerClassValueType( const std::string& name )
+	void ScriptEngine::registerClassValueType( const std::string& theName )
 	{
+		std::string name = theName;
+		processNamespace( name );
+		
 		int flags = getClassFlags< CLASS >();
 		
 		int res = engine->RegisterObjectType( name.c_str(), sizeof( CLASS ), asOBJ_VALUE | flags );
@@ -69,8 +78,11 @@ namespace as
 	}
 	
 	template< class CLASS, bool DO_FACTORY >
-	void ScriptEngine::registerClassReferenceType( const std::string& name )
+	void ScriptEngine::registerClassReferenceType( const std::string& theName )
 	{
+		std::string name = theName;
+		processNamespace( name );
+		
 		int res = engine->RegisterObjectType( name.c_str(), sizeof( CLASS ), asOBJ_REF );
 		if ( res < 0 )
 		{
@@ -102,7 +114,8 @@ namespace as
 		static_assert( Traits::ArgCount >= 1, "Need at least one argument, for \"this\"." );
 		static_assert( std::is_pointer< typename Traits::template Arg< 0 >::Type >::value, "Need first argument to be a pointer, for \"this\"." );
 		
-		typedef typename std::remove_pointer< typename Traits::template Arg< 0 >::Type >::type Class;
+		typedef typename std::remove_pointer< typename Traits::template Arg< 0 >::Type >::type ClassRaw;
+		typedef typename std::remove_const< ClassRaw >::type Class;
 		
 		std::string decl = TypeGetter< typename std::remove_pointer< FUNC >::type >::getType();
 		
@@ -118,11 +131,33 @@ namespace as
 			decl = decl.erase( start + 1, comma - start );
 		}
 		
+		if ( std::is_const< ClassRaw >::value )
+		{
+			decl += " const";
+		}
+		
 		std::string find = "$__FUNC__$";
 		std::size_t namePos = decl.find( find );
 		decl = decl.replace( namePos, find.length(), name );
 		
-		int res = engine->RegisterObjectMethod( TypeGetter< Class >::getType().c_str(), decl.c_str(), asFUNCTION( func ), asCALL_CDECL_OBJFIRST );
+		std::string classRaw = TypeGetter< Class >::getType();
+		std::string className = classRaw;
+		processNamespace( className );
+		
+		std::size_t nsPos = classRaw.find( className );
+		if ( nsPos != std::string::npos )
+		{
+			std::string ns = classRaw.substr( 0, nsPos );
+			
+			// Probably needs improvement, like if the class was a::B and a parameter
+			// was b::a::C.
+			for ( std::size_t found = decl.find( ns ); found != std::string::npos; found = decl.find( ns ) )
+			{
+				decl.erase( found, ns.length() );
+			}
+		}
+		
+		int res = engine->RegisterObjectMethod( className.c_str(), decl.c_str(), asFUNCTION( func ), asCALL_CDECL_OBJFIRST );
 		if ( res < 0 )
 		{
 			throw std::runtime_error( "Failed to register class function: " + util::toString( res ) );
