@@ -101,8 +101,9 @@ namespace as
 			throw std::runtime_error( "Failed to register object add reference behavior: " + util::toString( res ) );
 		}
 		
-		// This is a template because if you don't want the factory method, it still compiles the call,
-		// which will fail if the default constructor isn't accessible, like being private.
+		// This is a template because with an if statement, if you don't want the factory method,
+		// it still compiles the call, which will fail if the default constructor isn't accessible,
+		// like it being private.
 		Factory< CLASS, DO_FACTORY >::registerBehavior( engine, name );
 	}
 	
@@ -144,8 +145,8 @@ namespace as
 		std::string className = classRaw;
 		processNamespace( className );
 		
-		std::size_t nsPos = classRaw.find( className );
-		if ( nsPos != std::string::npos )
+		std::size_t nsPos = classRaw.rfind( className );
+		if ( nsPos != std::string::npos and nsPos != 0 )
 		{
 			std::string ns = classRaw.substr( 0, nsPos );
 			
@@ -153,7 +154,7 @@ namespace as
 			// was b::a::C.
 			for ( std::size_t found = decl.find( ns ); found != std::string::npos; found = decl.find( ns ) )
 			{
-				decl.erase( found, ns.length() );
+				decl = decl.erase( found, ns.length() );
 			}
 		}
 		

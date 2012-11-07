@@ -1,7 +1,7 @@
 /*
 #include <iostream>
 
-#include <scriptstdstring/scriptstdstring.h>
+//#include <scriptstdstring/scriptstdstring.h>
 
 #include "as/ScriptContext.hpp"
 #include "as/ScriptEngine.hpp"
@@ -99,32 +99,37 @@ int main_as()
 {
 	try
 	{
+		std::cout << "Starting..." << std::endl;
 		as::ScriptEngine engine;
 		engine.setMessageCallback( std::bind( &messageCallback, std::placeholders::_1 ) );
+		using std::cout;
 		
-		RegisterStdString( engine.getRaw() );
+		//RegisterStdString( engine.getRaw() );
 		//RegisterStdStringUtils( engine.getRaw() );
 		
-		engine.registerClassType< MyClass >( "MyClass" );
+		engine.registerClassValueType< MyClass >( "MyClass" );
+		
 		engine.registerClassProperty< decltype( &MyClass::f ), &MyClass::f >( "f" );
 		engine.registerClassProperty< decltype( &MyClass::d ), &MyClass::d >( "d" );
-		engine.registerClassFunction< decltype( &MyClass::print ), &MyClass::print >( "print" );
-		engine.registerClassFunction( &printSum, "printSum" );
+		//engine.registerClassFunction< decltype( &MyClass::print ), &MyClass::print >( "print" );
+		//engine.registerClassFunction( &printSum, "printSum" );
 		
 		engine.registerGlobalFunction( add, "add" );
 		engine.registerGlobalFunction( mult, "multiply" );
 		engine.registerGlobalFunction( doStuff, "doStuff" );
-		engine.registerGlobalFunction( print, "print" );
+		//engine.registerGlobalFunction( print, "print" );
 		
 		engine.registerGlobalProperty( i, "i" );
 		engine.registerGlobalProperty( l, "l" );
 		
+		std::cout << "Making module..." << std::endl;
 		as::ScriptModule& module = ( * engine.createModule( "test" ) );
 		module.define( "KITTY" );
 		
 		module.addSectionFromFile( "test.angelscript" );
 		module.build();
 		
+		std::cout << "Printing metadata..." << std::endl;
 		auto data = module.getAllTypeMetadata();
 		for ( auto it = data.begin(); it != data.end(); ++it )
 		{
@@ -136,6 +141,7 @@ int main_as()
 			std::cout << it->first << ": [" << it->second << "]" << std::endl;
 		}
 		
+		std::cout << "Running..." << std::endl;
 		auto oldI = i;
 		auto oldL = l;
 		{
@@ -153,4 +159,5 @@ int main_as()
 	
 	return 0;
 }
-*/
+int main() { return main_as(); }
+//*/
