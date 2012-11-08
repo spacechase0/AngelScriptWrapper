@@ -6,6 +6,7 @@
 #include <util/String.hpp>
 
 #include "as/ClassFlags.hpp"
+#include "as/DeclMaker.hpp"
 #include "as/GenericFunctions.hpp"
 #include "as/TypeGetter.hpp"
 
@@ -13,14 +14,15 @@
 
 namespace as
 {
-	template< typename FUNC >
+	template< typename FUNC, typename... OVERRIDES >
 	typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
 	ScriptEngine::registerGlobalFunction( FUNC func, const std::string& theName )
 	{
 		std::string name = theName;
 		processNamespace( name );
 		
-		std::string decl = TypeGetter< typename std::remove_pointer< FUNC >::type >::getType();
+		typedef TypeOverrides< OVERRIDES... > Overrides;
+		std::string decl = DeclMaker< Overrides, typename std::remove_pointer< FUNC >::type >::getDecl();
 		
 		std::string find = "$__FUNC__$";
 		std::size_t namePos = decl.find( find );
@@ -51,9 +53,9 @@ namespace as
 	}
 	
 	template< class CLASS >
-	void ScriptEngine::registerClassValueType( const std::string& theName )
+	void ScriptEngine::registerClassValueType()
 	{
-		std::string name = theName;
+		std::string name = TypeGetter< CLASS >::getType();
 		processNamespace( name );
 		
 		int flags = getClassFlags< CLASS >();
@@ -78,9 +80,9 @@ namespace as
 	}
 	
 	template< class CLASS, bool DO_FACTORY >
-	void ScriptEngine::registerClassReferenceType( const std::string& theName )
+	void ScriptEngine::registerClassReferenceType()
 	{
-		std::string name = theName;
+		std::string name = TypeGetter< CLASS >::getType();
 		processNamespace( name );
 		
 		int res = engine->RegisterObjectType( name.c_str(), sizeof( CLASS ), asOBJ_REF );
@@ -107,7 +109,7 @@ namespace as
 		Factory< CLASS, DO_FACTORY >::registerBehavior( engine, name );
 	}
 	
-	template< typename FUNC >
+	template< typename FUNC, typename... OVERRIDES >
 	typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
 	ScriptEngine::registerClassFunction( FUNC func, const std::string& name )
 	{
@@ -118,7 +120,8 @@ namespace as
 		typedef typename std::remove_pointer< typename Traits::template Arg< 0 >::Type >::type ClassRaw;
 		typedef typename std::remove_const< ClassRaw >::type Class;
 		
-		std::string decl = TypeGetter< typename std::remove_pointer< FUNC >::type >::getType();
+		typedef TypeOverrides< OVERRIDES... > Overrides;
+		std::string decl = DeclMaker< Overrides, typename std::remove_pointer< FUNC >::type >::getDecl();
 		
 		std::size_t start = decl.find( "(" );
 		std::size_t comma = decl.find( "," );
@@ -165,11 +168,12 @@ namespace as
 		}
 	}
 	
-	template< typename FUNCPTR, FUNCPTR FUNC >
+	template< typename FUNCPTR, FUNCPTR FUNC, typename... OVERRIDES >
 	typename std::enable_if< std::is_member_function_pointer< FUNCPTR >::value, void >::type
 	ScriptEngine::registerClassFunction( const std::string& name )
 	{
-		registerClassFunction( util::makeMemberFunctionProxy< FUNCPTR, FUNC >(), name );
+		typedef decltype( util::makeMemberFunctionProxy< FUNCPTR, FUNC >() ) FUNCTYPE;
+		registerClassFunction< FUNCTYPE, OVERRIDES... >( util::makeMemberFunctionProxy< FUNCPTR, FUNC >(), name );
 	}
 	
 	template< typename PROPPTR, PROPPTR PROP >

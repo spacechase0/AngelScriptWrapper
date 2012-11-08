@@ -28,7 +28,7 @@ namespace as
 			typedef std::function< void ( Message& ) > MessageCallback;
 			void setMessageCallback( MessageCallback theMessageCallback );
 			
-			template< typename FUNC >
+			template< typename FUNC, typename... OVERRIDES >
 			typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
 			registerGlobalFunction( FUNC func, const std::string& theName );
 			
@@ -37,16 +37,16 @@ namespace as
 			registerGlobalProperty( VAR& var, const std::string& theName );
 			
 			template< class CLASS >
-			void registerClassValueType( const std::string& theName );
+			void registerClassValueType();
 			
 			template< class CLASS, bool DO_FACTORY = true >
-			void registerClassReferenceType( const std::string& theName );
+			void registerClassReferenceType();
 			
-			template< typename FUNC >
+			template< typename FUNC, typename... OVERRIDES >
 			typename std::enable_if< std::is_pointer< FUNC >::value and std::is_function< typename std::remove_pointer< FUNC >::type >::value, void >::type
 			registerClassFunction( FUNC func, const std::string& name );
 			
-			template< typename FUNCPTR, FUNCPTR FUNC >
+			template< typename FUNCPTR, FUNCPTR FUNC, typename... OVERRIDES >
 			typename std::enable_if< std::is_member_function_pointer< FUNCPTR >::value, void >::type
 			registerClassFunction( const std::string& name );
 			

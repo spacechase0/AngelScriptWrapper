@@ -86,15 +86,17 @@ namespace as
 	#undef doGenericTypeGetter
 	#undef doGenericTypeGetterTemplate
 	
+	/*
 	template< typename RET, typename... ARGS >
 	class TypeGetter< RET ( ARGS... ) >
 	{
 		public:
 			static std::string getType()
 			{
-				return TypeGetter< RET >::getType() + " $__FUNC__$( " + TypeGetter< ARGS... >::getType() + " )";
+				return TypeGetter< RET, 0 >::getType() + " $__FUNC__$( " + TypeGetter< ARGS... >::getType() + " )";
 			}
 	};
+	//*/
 }
 
 #endif // AS_TYPEGETTER_HPP

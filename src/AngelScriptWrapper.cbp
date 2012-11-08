@@ -43,6 +43,7 @@
 		<Unit filename="as\ArgConverter.hpp" />
 		<Unit filename="as\ArgSetter.hpp" />
 		<Unit filename="as\ClassFlags.hpp" />
+		<Unit filename="as\DeclMaker.hpp" />
 		<Unit filename="as\GenericFunctions.hpp" />
 		<Unit filename="as\Message.cpp" />
 		<Unit filename="as\Message.hpp" />
@@ -55,6 +56,7 @@
 		<Unit filename="as\ScriptModule.hpp" />
 		<Unit filename="as\ScriptModule.inl" />
 		<Unit filename="as\TypeGetter.hpp" />
+		<Unit filename="as\TypeOverride.hpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="scriptbuilder\scriptbuilder.cpp" />
 		<Unit filename="scriptbuilder\scriptbuilder.h" />
